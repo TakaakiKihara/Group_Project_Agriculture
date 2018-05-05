@@ -14,15 +14,33 @@ production = production %>%
 
 production$Year = str_sub(production$Year,2)
 
+production_TPP = production %>%
+  filter(Area == c("United States of America",
+                   "Japan",
+                   "Canada",
+                   "Mexico",
+                   "Peru",
+                   "Chile",
+                   "New Zealand",
+                   "Australia",
+                   "Brunei Darussalam",
+                   "Singapore",
+                   "Malaysia",
+                   "Vietnam",
+                   "Thailand"))
+
+production_NAFTA = production %>%
+  filter(Area == c("United States of America",
+                  "Canada",
+                  "Mexico"))
+
+production_TPP$Area = as.character(production_TPP$Area)
 
 world_map = map_data("world")
 world_map$region = as.factor(world_map$region)
 
-distinct(world_map,region)
-distinct(production, Area)
-?distinct
-?join
-production_map = full_join(world_map, production,
+
+production_NAFTA_map = right_join(world_map, production_NAFTA,
                            by = c("region" = "Area"))
 
 ui <- fluidPage(
