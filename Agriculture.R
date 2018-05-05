@@ -8,19 +8,22 @@ library(stringr)
 
 production = read.csv("Production_Crops_E_All_Data.csv") 
 
-
 production = production %>%
   select(-ends_with("F")) %>%
   gather(Y1961:Y2016, key = "Year", value = "production") 
 
 production$Year = str_sub(production$Year,2)
 
-# The script below is not correct
-# production = production %>%
-#  spread(key = "Element", value = "production")
 
+world_map = map_data("world")
+world_map$region = as.factor(world_map$region)
 
-
+distinct(world_map,region)
+distinct(production, Area)
+?distinct
+?join
+production_map = full_join(world_map, production,
+                           by = c("region" = "Area"))
 
 ui <- fluidPage(
   titlePanel(title = "World Agricltural Production",
@@ -40,18 +43,11 @@ ui <- fluidPage(
   )
 )
 
+
+
 server <- function(input, output, session) {
   
 }
 
 shinyApp(ui, server)
-
-########################## Maps ############################
-
-library(maps)
-world_map = map_data("world")
-
-ggplot(world_map,
-       aes(x = long, y = lat, group = group)) +
-  geom_polygon(color = "blue", fill = "white")
 
