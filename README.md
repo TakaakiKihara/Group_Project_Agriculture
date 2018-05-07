@@ -12,9 +12,9 @@ Our four steps of doing the Agriculture research using R.
 (4) ...
 
 
-----------------------Technical Support----------------------
+--------------------Technical Support----------------------
 
-How to set up Git user.name and user.email
+# How to set up Git user.name and user.email
 
 Setting your Git username for every repository on your computer
 
