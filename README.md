@@ -4,8 +4,11 @@ Our four steps of doing the Agriculture research using R.
 
 
 (1) Creat Shiny dashboard to do exploratory research to identify the "Drama"
+
 (2) Find the relationship between crop Price and the total production
+
 (3) ...
+
 (4) ...
 
 
