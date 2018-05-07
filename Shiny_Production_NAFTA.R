@@ -8,10 +8,11 @@ library(tidyr)
 library(stringr)
 library(mapproj)
 
-####TPP
+
+#####NAFTA
 ui <- fluidPage(
-  titlePanel(title = "TPP countires Agricltural Production",
-             windowTitle = "TPP"),
+  titlePanel(title = "NAFTA countires Agricltural Production",
+             windowTitle = "NAFTA"),
   sidebarLayout(
     sidebarPanel(
       helpText("Create agricultural production map"),
@@ -41,7 +42,7 @@ ui <- fluidPage(
 
 
 server <- function(input, output, session) {
-  production_TPP_map = ({
+  production_NAFTA_map = ({
     production = fread("Production_Crops_E_All_Data.csv") 
     
     production = production %>%
@@ -54,18 +55,8 @@ server <- function(input, output, session) {
     
     production_TPP = production %>%
       filter(Area %in% c("United States of America",
-                         "Japan",
                          "Canada",
-                         "Mexico",
-                         "Peru",
-                         "Chile",
-                         "New Zealand",
-                         "Australia",
-                         "Brunei Darussalam",
-                         "Singapore",
-                         "Malaysia",
-                         "Viet Nam",
-                         "Thailand") &
+                         "Mexico") &
                Item %in% c("Rice, paddy",
                            "Wheat",
                            "Barley",
@@ -82,27 +73,17 @@ server <- function(input, output, session) {
     world_map$region[world_map$region == "USA"] = "United States of America"
     world_map$region[world_map$region == "Vietnam"] = "Viet Nam"
     
-    TPP_map = world_map %>%
+    NAFTA_map = world_map %>%
       filter(region %in% c("United States of America",
-                           "Japan",
                            "Canada",
-                           "Mexico",
-                           "Peru",
-                           "Chile",
-                           "New Zealand",
-                           "Australia",
-                           "Brunei Darussalam",
-                           "Singapore",
-                           "Malaysia",
-                           "Viet Nam",
-                           "Thailand"))
+                           "Mexico"))
     
     right_join(world_map, production_TPP,
                by = c("region" = "Area"))
   })
   
   map_item = reactive({
-    production_TPP_map %>%
+    production_NAFTA_map %>%
       filter(Item == input$Item)
   })
   map_item_Year = reactive({
@@ -111,9 +92,9 @@ server <- function(input, output, session) {
   })
   
   output$map = renderPlot({
-    ggplot(TPP_map, aes(x = long,
-                        y= lat,
-                        group = group),
+    ggplot(NAFTA_map, aes(x = long,
+                          y= lat,
+                          group = group),
            fill = "white",
            color = "black") +
       geom_polygon() +
@@ -130,3 +111,4 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
