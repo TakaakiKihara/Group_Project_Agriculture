@@ -345,4 +345,5 @@ price_prod_index %>%
   ylab("Production")
 ```
 
-
+Quinoa
+As the rich world discovered the grain, demand outstripped supply. The soaring price transformed global production, prompting a large increase in supply, which ultimately pricked the quinoa price. The existing farmers increasingly used their quinoa crop to sell, and new growers were tempted in. Today more than 50 countries around the world are growing it. Many countries are holding on to unsold quinoa stock. As a result, the price of quinoa has fallenthe price of quinoa has fallen dramatically. 
