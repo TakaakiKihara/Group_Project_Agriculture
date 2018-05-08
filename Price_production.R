@@ -7,8 +7,8 @@ library(stringr)
 library(ggplot2)
 library(data.table)
 
-harvest = fread("Production_Crops_E_All_Data.csv")
-price = fread("Prices_E_All_Data.csv")
+harvest = read.csv("Production_Crops_E_All_Data.csv")
+price = read.csv("Prices_E_All_Data.csv")
 
 ######data cleaning for harvest#######
 
