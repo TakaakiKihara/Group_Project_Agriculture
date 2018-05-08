@@ -24,7 +24,9 @@ ui <- fluidPage(
                               "Soybeans",
                               "Sugar beet",
                               "Sugar cane",
-                              "Avocados",),
+                              "Avocados",
+                              "Blueberries",
+                              "Quinoa"),
                   selected = "")
     ),
     mainPanel(

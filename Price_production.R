@@ -74,13 +74,16 @@ price_prod <- inner_join(yearly_price, yearly_production,
 ######## make a shiny for the comparison
 
 price_prod_index = price_prod %>%
-  filter(Item == "Wheat") %>%
+  filter(Item == "Avocados" ) %>%
   mutate(index = total_prod/avg_price) 
 
-multiple = mean(price_prod_index$index) * 0.5
+multiple = mean(price_prod_index$index) *1.1
 
 price_prod_index %>%
   ggplot(aes(x = Year)) +
-  geom_line(aes(y = total_prod, colour = "Prod")) +
+  geom_col(aes(y = total_prod, colour = "Prod"), fill = "lightgreen") +
   geom_line(aes(y = avg_price*multiple, colour = "Price"))  +
-  scale_y_continuous(sec.axis = sec_axis(~./multiple, name = "Price [$USD/Tonne]"))
+  scale_y_continuous(sec.axis = sec_axis(~./multiple, name = "Price [$USD/Tonne]"))+
+  ggtitle("Price and Production Trend")+
+  xlab("Year")+
+  ylab("Production")

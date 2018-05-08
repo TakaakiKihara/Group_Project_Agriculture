@@ -1,0 +1,348 @@
+---
+title: 'Report: Agricultural Production in TPP countires'
+author: "Monica Han"
+date: "May 8, 2018"
+output:
+  html_document:
+    df_print: paged
+runtime: shiny
+---
+RICE
+
+Top rice production from Japan to Southeast asia (1990)
+Japan : Japan’s rice crisis starts with its older, smaller stomachs. As the population ages, appetites are shrinking. Diets among younger Japanese favour wheat and the country is eating about 20 per cent less rice than it did two decades ago. Other sources of demand are also vanishing: Japan drinks about a third as much (rice-based) sake as it did in 1970 and consumption of fish — the traditional accompaniment to rice — is down 30 per cent since 2005. Besides, Japan’s average daily calorie intake has been on the decline, falling to 2,415 due to the population is getting older.
+
+Vietnam: government support→ The Mekong Delta is the heart of the rice producing region of the country where water, boats, houses and markets coexist to produce a generous harvest of rice. At the end of the Vietnamese war in 1975, the government supported the development of the Mekong delta in South Vietnam. For example, the government supplied to the farmers seed, fertilizer and other essentials. This increase is attributed to planting of modern early maturing rice varieties, better management, appropriate Legal Constructs by the Government.
+
+
+```{r}
+library(data.table)
+library(shiny)
+library(ggplot2)
+library(dplyr)
+library(shiny)
+library(tidyr)
+library(stringr)
+library(mapproj)
+production = fread("Production_Crops_E_All_Data.csv") 
+    
+production = production %>%
+      select(-ends_with("F")) %>%
+      gather(Y1961:Y2016, key = "Year", value = "production") 
+    
+    production$Year = str_sub(production$Year,2)
+    production$Year = as.numeric(production$Year)
+    production$Area = as.character(production$Area)
+    
+    production_TPP = production %>%
+      filter(Area %in% c("United States of America",
+                         "Japan",
+                         "Canada",
+                         "Mexico",
+                         "Peru",
+                         "Chile",
+                         "New Zealand",
+                         "Australia",
+                         "Brunei Darussalam",
+                         "Singapore",
+                         "Malaysia",
+                         "Viet Nam",
+                         "Thailand") &
+               Item %in% c("Rice, paddy",
+                           "Wheat",
+                           "Barley",
+                           "Maize",
+                           "Soybeans",
+                           "Sugar beet",
+                           "Sugar cane",
+                           "Oilcrops, Oil Equivalent") &
+               Element == "Production" &
+               Year %in% c(1961, seq(1960,2010,10),2016)) 
+    
+    world_map = map_data("world")
+    world_map$region[world_map$region == "Brunei"] = "Brunei Darussalam"
+    world_map$region[world_map$region == "USA"] = "United States of America"
+    world_map$region[world_map$region == "Vietnam"] = "Viet Nam"
+    
+    TPP_map = world_map %>%
+      filter(region %in% c("United States of America",
+                           "Japan",
+                           "Canada",
+                           "Mexico",
+                           "Peru",
+                           "Chile",
+                           "New Zealand",
+                           "Australia",
+                           "Brunei Darussalam",
+                           "Singapore",
+                           "Malaysia",
+                           "Viet Nam",
+                           "Thailand"))
+
+production_TPP_map = right_join(world_map, production_TPP,
+               by = c("region" = "Area"))
+
+production_TPP_map_1961 = production_TPP_map %>%
+      filter(Item == "Rice, paddy" & Year == 1961)
+
+  ggplot(TPP_map, aes(x = long,
+                        y= lat,
+                        group = group),
+           fill = "white",
+           color = "black") +
+      geom_polygon() +
+      geom_polygon(data = production_TPP_map_1961, 
+                   aes(x = long,
+                       y= lat,
+                       group = group,
+                       fill = production)) +
+      scale_fill_gradient(low = "white",
+                          high = "red",
+                          na.value = "white") +
+      ggtitle(paste("Rice in 1961", sep ="/"))
+  
+```
+```{r echo = F}
+  production_TPP_map_1970 = production_TPP_map %>%
+      filter(Item == "Rice, paddy" & Year == 1970)
+
+  ggplot(TPP_map, aes(x = long,
+                        y= lat,
+                        group = group),
+           fill = "white",
+           color = "black") +
+      geom_polygon() +
+      geom_polygon(data = production_TPP_map_1961, 
+                   aes(x = long,
+                       y= lat,
+                       group = group,
+                       fill = production)) +
+      scale_fill_gradient(low = "white",
+                          high = "red",
+                          na.value = "white") +
+      ggtitle(paste("Rice in 1970", sep ="/"))
+```
+```{r echo = F}  
+  production_TPP_map_1980 = production_TPP_map %>%
+      filter(Item == "Rice, paddy" & Year == 1980)
+
+  ggplot(TPP_map, aes(x = long,
+                        y= lat,
+                        group = group),
+           fill = "white",
+           color = "black") +
+      geom_polygon() +
+      geom_polygon(data = production_TPP_map_1961, 
+                   aes(x = long,
+                       y= lat,
+                       group = group,
+                       fill = production)) +
+      scale_fill_gradient(low = "white",
+                          high = "red",
+                          na.value = "white") +
+      ggtitle(paste("Rice in 1980", sep ="/"))
+```
+```{r echo = F}
+  production_TPP_map_1990 = production_TPP_map %>%
+      filter(Item == "Rice, paddy" & Year == 1990)
+
+  ggplot(TPP_map, aes(x = long,
+                        y= lat,
+                        group = group),
+           fill = "white",
+           color = "black") +
+      geom_polygon() +
+      geom_polygon(data = production_TPP_map_1990, 
+                   aes(x = long,
+                       y= lat,
+                       group = group,
+                       fill = production)) +
+      scale_fill_gradient(low = "white",
+                          high = "red",
+                          na.value = "white") +
+      ggtitle(paste("Rice in 1961", sep ="/"))
+```
+```{r echo = F}
+  production_TPP_map_2000 = production_TPP_map %>%
+      filter(Item == "Rice, paddy" & Year == 2000)
+
+  ggplot(TPP_map, aes(x = long,
+                        y= lat,
+                        group = group),
+           fill = "white",
+           color = "black") +
+      geom_polygon() +
+      geom_polygon(data = production_TPP_map_2000, 
+                   aes(x = long,
+                       y= lat,
+                       group = group,
+                       fill = production)) +
+      scale_fill_gradient(low = "white",
+                          high = "red",
+                          na.value = "white") +
+      ggtitle(paste("Rice in 2000", sep ="/"))
+
+```
+```{r echo = F}
+  production_TPP_map_2010 = production_TPP_map %>%
+      filter(Item == "Rice, paddy" & Year == 2010)
+
+  ggplot(TPP_map, aes(x = long,
+                        y= lat,
+                        group = group),
+           fill = "white",
+           color = "black") +
+      geom_polygon() +
+      geom_polygon(data = production_TPP_map_2010, 
+                   aes(x = long,
+                       y= lat,
+                       group = group,
+                       fill = production)) +
+      scale_fill_gradient(low = "white",
+                          high = "red",
+                          na.value = "white") +
+      ggtitle(paste("Rice in 2010", sep ="/"))
+
+```
+
+```{r echo = F}
+  production_TPP_map_2016 = production_TPP_map %>%
+      filter(Item == "Rice, paddy" & Year == 2016)
+
+  ggplot(TPP_map, aes(x = long,
+                        y= lat,
+                        group = group),
+           fill = "white",
+           color = "black") +
+      geom_polygon() +
+      geom_polygon(data = production_TPP_map_2016, 
+                   aes(x = long,
+                       y= lat,
+                       group = group,
+                       fill = production)) +
+      scale_fill_gradient(low = "white",
+                          high = "red",
+                          na.value = "white") +
+      ggtitle(paste("Rice in 2016", sep ="/"))
+
+```
+
+
+```{r }
+production = fread("Production_Crops_E_All_Data.csv") 
+
+production = production %>%
+  select(-ends_with("F")) %>%
+  gather(Y1961:Y2016, key = "Year", value = "production") 
+
+production$Year = str_sub(production$Year,2)
+production$Year = as.numeric(production$Year)
+production$Area = as.character(production$Area)
+production$production = as.numeric(production$production)
+
+production_TPP_rice = production %>%
+  filter(Area %in% c("Japan",
+                     "Viet Nam",
+                     "Thailand") &
+           Item == "Rice, paddy" &
+           Element == "Production") 
+
+ggplot(production_TPP_rice, aes(x = Year))+
+  geom_line(aes(y = production, colour = Area))
+```
+
+Wheat
+
+
+The United States is ranked first in production volume of wheat in TPP
+1990-2016 Canada and Australia have been increasing production
+Canada
+Australia-->1996 and 2010 Australia’s wheat growers achieved 49% of their yield potential because wheat growers have adopted advances in technology and adapted them to their needs. They have adopted improved varieties as well as improved practices, including reduced cultivation (or “tillage”) of their land, controlled traffic to reduce soil compaction, integrated weed management and seasonally targeted fertiliser use.
+
+
+Barley
+(1970) top barley production from the State to Canada-->The pattern of crop receipts has changed considerably over time,
+Australia has been increasing from 2000 and right not the as much as Canada
+
+Sugar Cane
+
+Mexico had been ranked the top of sugar cane production country from 1961-1990. However, Mexican sugar industry is recognized as uncompetitive in nature after 1990, mainly due to stagnating low sugarcane and sucrose yield and highly fiber in stalks per hectare and variability in the production process. Half of all Mexican sugarcane production occurs on ranchos that are 2 hectares or less in area. This small size of sugarcane farms effectively prevents the use of automated equipment, hence keeping sugarcane a manual labor operation. Manual harvesting requires skilled laborers as incorrectly harvested cane leads to loss of cane and lower sugar yield, poor juice quality, and problems in milling due to extraneous matter.
+Since 1990 Thailand has became the biggest production-->Following a decade and a half of sustained expansion, sugarcane areas and production increased sharply in recent years, with a record output achieved in 1996. The recent success of the industry can be attributed to several key factors, including attractive sugarcane prices, sugar factory relocation and capacity expansion policies which have successfully encouraged the extension of sugarcane areas. A third factor has been favourable weather. Since less than 10 percent of sugarcane area, now over one-million ha, is irrigated, favourable rainfall distribution has been an important factor in improved yields.
+
+Part 2: Price Analysis
+
+Avocados
+Demand for avocados has grown exponentially as people realise its health benefits worldwide. It is also driving prices up. Prices are stable from 2010 and even show a slightly rising trend. Several countries want to benefit from this growth, so a lot is being planted.
+
+```{r}
+harvest = fread("Production_Crops_E_All_Data.csv")
+price = fread("Prices_E_All_Data.csv")
+
+
+harvest = harvest %>%
+  select(-ends_with("F")) %>%
+  gather(Y1961:Y2016, key = "Year", value = "production")
+
+harvest$Year = str_sub(harvest$Year,2)
+harvest$Year = as.numeric(harvest$Year)
+harvest$Area = as.character(harvest$Area)
+
+harvest <- harvest %>%
+  select("Area", "Item","Element","Year","production") %>%
+  spread(key = Element, value = production)
+
+names(harvest) <- gsub(" ", "_", names(harvest))
+
+harvest <- harvest %>%
+  select(-Feed, -Area_harvested, -Yield) %>%
+  filter(!is.na(Production),
+         Year >= 1991)
+
+
+price = price %>%
+  select(-ends_with("F")) %>%
+  gather(Y1991:Y2016, key = "Year", value = "Price")
+
+price$Year = str_sub(price$Year,2)
+price$Year = as.numeric(price$Year)
+price$Area = as.character(price$Area)
+
+price <- price %>%
+  select("Area", "Item","Element","Year","Price") %>%
+  spread(key = Element, value = Price)
+
+names(price) <- gsub(" ", "_", names(price))
+
+price <- price %>%
+  filter(!is.na(`Producer_Price_(USD/tonne)`))
+
+
+yearly_production <- harvest %>%
+  group_by(Year, Item) %>%
+  summarise(total_prod = sum(Production))
+
+yearly_price <- price %>%
+  group_by(Year, Item) %>%
+  summarise(avg_price = median(`Producer_Price_(USD/tonne)`))
+  
+
+price_prod <- inner_join(yearly_price, yearly_production,
+           by = c("Item","Year"))
+
+price_prod_index = price_prod %>%
+  filter(Item == "Avocados" ) %>%
+  mutate(index = total_prod/avg_price) 
+
+multiple = mean(price_prod_index$index) *1.1
+
+price_prod_index %>%
+  ggplot(aes(x = Year)) +
+  geom_col(aes(y = total_prod, colour = "Prod"), fill = "lightgreen") +
+  geom_line(aes(y = avg_price*multiple, colour = "Price"))  +
+  scale_y_continuous(sec.axis = sec_axis(~./multiple, name = "Price [$USD/Tonne]"))+
+  ggtitle("Price and Production Trend")+
+  xlab("Year")+
+  ylab("Production")
+```
+
+
