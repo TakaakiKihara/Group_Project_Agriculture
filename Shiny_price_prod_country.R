@@ -14,7 +14,7 @@ ui <- fluidPage(
              windowTitle = "Price and Production"),
   sidebarLayout(
     sidebarPanel(
-      helpText("Analyze the relation between Price and Productionm"),
+      helpText("Analyze the relation between Price and Production"),
       selectInput(inputId = "Item",
                   label = "Chooose an Item to display",
                   choices = c("Rice, paddy",
@@ -24,7 +24,23 @@ ui <- fluidPage(
                               "Soybeans",
                               "Sugar beet",
                               "Sugar cane",
-                              "Avocados",),
+                              "Avocados"),
+                  selected = ""),
+      selectInput(inputId = "Country",
+                  label = "Chooose a country to display",
+                  choices = c("United States of America",
+                              "Japan",
+                              "Canada",
+                              "Mexico",
+                              "Peru",
+                              "Chile",
+                              "New Zealand",
+                              "Australia",
+                              "Brunei Darussalam",
+                              "Singapore",
+                              "Malaysia",
+                              "Viet Nam",
+                              "Thailand"),
                   selected = "")
     ),
     mainPanel(
@@ -56,8 +72,31 @@ server <- function(input, output, session) {
     
     harvest <- harvest %>%
       select(-Feed, -Area_harvested, -Yield) %>%
-      filter(!is.na(Production),
-             Year >= 1991)
+      filter(!is.na(Production) &
+             Year >= 1991 &
+             Area %in% c("United States of America",
+                          "Japan",
+                          "Canada",
+                          "Mexico",
+                          "Peru",
+                          "Chile",
+                          "New Zealand",
+                          "Australia",
+                          "Brunei Darussalam",
+                          "Singapore",
+                          "Malaysia",
+                          "Viet Nam",
+                          "Thailand") &
+               Item %in% c("Rice, paddy",
+                           "Wheat",
+                           "Barley",
+                           "Maize",
+                           "Soybeans",
+                           "Sugar beet",
+                           "Sugar cane",
+                           "Avocados",
+                           "Blueberries",
+                           "Quinoa") )
     
     price = price %>%
       select(-ends_with("F")) %>%
@@ -74,25 +113,39 @@ server <- function(input, output, session) {
     names(price) <- gsub(" ", "_", names(price))
     
     price <- price %>%
-      filter(!is.na(`Producer_Price_(USD/tonne)`))
+      filter(!is.na(`Producer_Price_(USD/tonne)`) &
+               Area %in% c("United States of America",
+                           "Japan",
+                           "Canada",
+                           "Mexico",
+                           "Peru",
+                           "Chile",
+                           "New Zealand",
+                           "Australia",
+                           "Brunei Darussalam",
+                           "Singapore",
+                           "Malaysia",
+                           "Viet Nam",
+                           "Thailand") &
+               Item %in% c("Rice, paddy",
+                           "Wheat",
+                           "Barley",
+                           "Maize",
+                           "Soybeans",
+                           "Sugar beet",
+                           "Sugar cane",
+                           "Avocados",
+                           "Blueberries",
+                           "Quinoa") )
     
     
-    yearly_production <- harvest %>%
-      group_by(Year, Item) %>%
-      summarise(total_prod = sum(Production))
-    
-    
-    yearly_price <- price %>%
-      group_by(Year, Item) %>%
-      summarise(avg_price = median(`Producer_Price_(USD/tonne)`))
-    
-    inner_join(yearly_price, yearly_production,
-               by = c("Item","Year"))
+    inner_join(price, harvest,
+               by = c("Area", "Item","Year"))
   })
   
   price_prod_index = reactive({price_prod %>%
-      filter(Item == input$Item) %>%
-      mutate(index = total_prod/avg_price) 
+      filter(Item == input$Item & Area == input$Country) %>%
+      mutate(index = Production/`Producer_Price_(USD/tonne)`) 
   })
   
   multiple = reactive({mean(price_prod_index()$index) * 0.5
@@ -100,10 +153,10 @@ server <- function(input, output, session) {
   
   output$graph = renderPlot({
     ggplot(price_prod_index(), aes(x = Year)) +
-      geom_line(aes(y = total_prod, colour = "Prod")) +
-      geom_line(aes(y = avg_price*multiple(), colour = "Price"))  +
+      geom_line(aes(y = Production, colour = "Prod")) +
+      geom_line(aes(y = `Producer_Price_(USD/tonne)`*multiple(), colour = "Price"))  +
       scale_y_continuous(sec.axis = sec_axis(~./multiple(), name = "Price [$USD/Tonne]")) +
-      ggtitle(paste(input$Item))
+      ggtitle(paste(input$Item, "in", input$Country))
   })
 }
 

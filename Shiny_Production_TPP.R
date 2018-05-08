@@ -24,11 +24,13 @@ ui <- fluidPage(
                               "Soybeans",
                               "Sugar beet",
                               "Sugar cane",
-                              "Oilcrops, Oil Equivalent"),
+                              "Avocados",
+                              "Blueberries",
+                              "Quinoa"),
                   selected = ""),
       selectInput(inputId = "Year",
                   label = "Chooose a Year to display",
-                  choices = c(1961, seq(1960,2010,10),2016),
+                  choices = c(1961, seq(1970,2010,10),2016),
                   selected = "")
     ),
     mainPanel(
@@ -73,7 +75,9 @@ server <- function(input, output, session) {
                            "Soybeans",
                            "Sugar beet",
                            "Sugar cane",
-                           "Oilcrops, Oil Equivalent") &
+                           "Avocados",
+                           "Blueberries",
+                           "Quinoa") &
                Element == "Production" &
                Year %in% c(1961, seq(1960,2010,10),2016)) 
     
