@@ -37,7 +37,10 @@ production_TPP = production %>%
                        "Soybeans",
                        "Sugar beet",
                        "Sugar cane",
-                       "Oilcrops, Oil Equivalent") &
+                       "Oilcrops, Oil Equivalent",
+                       "Avocados",
+                       "Quinoa",
+                       "Blueberries") &
            Element == "Production" &
            Year %in% c(1961, seq(1960,2010,10),2016)) 
 
@@ -65,7 +68,10 @@ production_TPP_map = right_join(world_map, production_TPP,
                                 by = c("region" = "Area"))
 
 production_TPP_map = production_TPP_map %>%
-  filter(Item == "Rice, paddy" & Year == 1961)
+  filter(Item == "Blueberries" & Year == 2000)
+
+######## Changge "Item" and "Year" and 
+######## clean environment and run all to see the change
 
 ggplot(TPP_map, aes(x = long,
                     y= lat,
@@ -81,4 +87,4 @@ ggplot(TPP_map, aes(x = long,
   scale_fill_gradient(low = "white",
                       high = "red",
                       na.value = "white") +
-  ggtitle(paste("Rice in 1961", sep ="/"))
+  ggtitle(paste("Blueberries in 2000", sep ="/"))
