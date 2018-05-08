@@ -5,9 +5,10 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(ggplot2)
+library(data.table)
 
-harvest = read.csv("Production_Crops_E_All_Data.csv")
-price = read.csv("Prices_E_All_Data.csv")
+harvest = fread("Production_Crops_E_All_Data.csv")
+price = fread("Prices_E_All_Data.csv")
 
 ######data cleaning for harvest#######
 
@@ -63,7 +64,7 @@ levels(yearly_production$Item)
 
 yearly_price <- price %>%
   group_by(Year, Item) %>%
-  summarise(avg_price = mean(`Producer_Price_(USD/tonne)`))
+  summarise(avg_price = median(`Producer_Price_(USD/tonne)`))
   
 ######## compare produciton and price with geom_line
 
@@ -72,9 +73,14 @@ price_prod <- inner_join(yearly_price, yearly_production,
 
 ######## make a shiny for the comparison
 
-price_prod %>%
-  filter(Item == "Pineapples") %>%
+price_prod_index = price_prod %>%
+  filter(Item == "Wheat") %>%
+  mutate(index = total_prod/avg_price) 
+
+multiple = mean(price_prod_index$index) * 0.5
+
+price_prod_index %>%
   ggplot(aes(x = Year)) +
   geom_line(aes(y = total_prod, colour = "Prod")) +
-  geom_line(aes(y = avg_price*100000, colour = "Price"))  +
-  scale_y_continuous(sec.axis = sec_axis(~./100000, name = "Price [$USD/Tonne]"))
+  geom_line(aes(y = avg_price*multiple, colour = "Price"))  +
+  scale_y_continuous(sec.axis = sec_axis(~./multiple, name = "Price [$USD/Tonne]"))
